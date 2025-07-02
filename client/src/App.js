@@ -1,27 +1,19 @@
-import React, { useState } from 'react';
-import HomePage from './page/home';
-import LoginForm from './page/login';
-import SignupForm from './page/signup';
+// src/App.js
+import React from 'react';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import AllProduct from './page/AllProduct';
+import AddProduct from './page/addproduct';
+import ViewProduct from './page/viewproduct';
 
 function App() {
-  // Possible values: 'home', 'login', 'signup'
-  const [currentPage, setCurrentPage] = useState('home');
-
   return (
-    <>
-      {currentPage === 'home' && (
-        <HomePage
-          onLoginClick={() => setCurrentPage('login')}
-          onSignupClick={() => setCurrentPage('signup')}
-        />
-      )}
-      {currentPage === 'login' && (
-        <LoginForm onBack={() => setCurrentPage('home')} />
-      )}
-      {currentPage === 'signup' && (
-        <SignupForm onBack={() => setCurrentPage('home')} />
-      )}
-    </>
+    <Router>
+      <Routes>
+        <Route path="/" element={<AllProduct />} />
+        <Route path="/addproduct" element={<AddProduct />} />
+        <Route path="/viewproduct/:id" element={<ViewProduct />} />
+      </Routes>
+    </Router>
   );
 }
 
