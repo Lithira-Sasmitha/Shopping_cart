@@ -21,6 +21,8 @@ app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 app.use('/api', require('./routes/auth'));
 app.use('/api/products', require('./routes/productroute')); // your product routes including multer
 
+app.use('/api', require('./routes/user'));
+
 // Test route
 app.get('/api/hello', (req, res) => {
   res.json({ message: 'Hello from server!' });
