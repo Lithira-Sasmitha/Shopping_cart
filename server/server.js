@@ -1,35 +1,27 @@
 const express = require('express');
 const cors = require('cors');
 const dotenv = require('dotenv');
+const connectDB = require('./db');
+const userRoutes = require('./routes/userRoute');
 const path = require('path');
+
+dotenv.config();
+connectDB();
+
 const app = express();
 
-// Load environment variables from .env file
-dotenv.config();
-
-// Connect to MongoDB
-require('./db'); // Adjust path if needed
-
-// Middleware
 app.use(cors());
 app.use(express.json());
 
-// Serve the uploads folder as static so images are accessible
+// Serve uploaded profile pictures
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
-// Routes
-app.use('/api', require('./routes/auth'));
-app.use('/api/products', require('./routes/productroute')); // your product routes including multer
+// User routes
+app.use('/api/users', userRoutes);
 
-app.use('/api', require('./routes/user'));
-
-// Test route
 app.get('/api/hello', (req, res) => {
   res.json({ message: 'Hello from server!' });
 });
 
-// Start server
-const port = process.env.PORT || 5000;
-app.listen(port, () => {
-  console.log(`🚀 Server is running on: http://localhost:${port}`);
-});
+const PORT = process.env.PORT || 5000;
+app.listen(PORT, () => console.log(`🚀 Server running on http://localhost:${PORT}`));
