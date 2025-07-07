@@ -1,7 +1,7 @@
 const User = require('../models/userModel');
 const bcrypt = require('bcryptjs');
 
-// Signup
+// Signup new user
 const signup = async (req, res) => {
   const { name, email, phone, address, password, role } = req.body;
 
@@ -32,11 +32,12 @@ const signup = async (req, res) => {
       },
     });
   } catch (error) {
+    console.error('Signup error:', error);
     res.status(500).json({ message: error.message });
   }
 };
 
-// Login
+// Login existing user
 const login = async (req, res) => {
   const { email, password } = req.body;
 
@@ -59,6 +60,7 @@ const login = async (req, res) => {
       },
     });
   } catch (error) {
+    console.error('Login error:', error);
     res.status(500).json({ message: error.message });
   }
 };
@@ -83,18 +85,20 @@ const updateProfilePicture = async (req, res) => {
       profilePicture: updatedUser.profilePicture,
     });
   } catch (error) {
+    console.error('Update profile picture error:', error);
     res.status(500).json({ message: error.message });
   }
 };
 
-// === Admin Functions ===
+// ===== Admin Functions =====
 
 // Get all users (admin)
 const getAllUsers = async (req, res) => {
   try {
-    const users = await User.find().select('-password'); // exclude password
+    const users = await User.find().select('-password'); // exclude password field for security
     res.json(users);
   } catch (error) {
+    console.error('Get all users error:', error);
     res.status(500).json({ message: 'Server error fetching users' });
   }
 };
@@ -108,24 +112,25 @@ const updateUser = async (req, res) => {
     const updatedUser = await User.findByIdAndUpdate(
       userId,
       { name, phone, address, email },
-      { new: true }
+      { new: true, runValidators: true }
     ).select('-password');
 
     if (!updatedUser) return res.status(404).json({ message: 'User not found' });
 
     res.json(updatedUser);
   } catch (error) {
+    console.error('Update user error:', error);
     res.status(500).json({ message: 'Server error updating user' });
   }
 };
 
-// Update user role (admin)
+// Update user role (admin only)
 const updateUserRole = async (req, res) => {
   try {
     const userId = req.params.id;
     const { role } = req.body;
 
-    // Optionally validate role (e.g., only 'user' or 'admin')
+    // Validate role input
     const validRoles = ['user', 'admin'];
     if (!validRoles.includes(role)) {
       return res.status(400).json({ message: 'Invalid role' });
@@ -134,14 +139,30 @@ const updateUserRole = async (req, res) => {
     const updatedUser = await User.findByIdAndUpdate(
       userId,
       { role },
-      { new: true }
+      { new: true, runValidators: true }
     ).select('-password');
 
     if (!updatedUser) return res.status(404).json({ message: 'User not found' });
 
     res.json(updatedUser);
   } catch (error) {
+    console.error('Update user role error:', error);
     res.status(500).json({ message: 'Server error updating role' });
+  }
+};
+
+// Delete user (admin only)
+const deleteUser = async (req, res) => {
+  try {
+    const userId = req.params.id;
+
+    const deletedUser = await User.findByIdAndDelete(userId);
+    if (!deletedUser) return res.status(404).json({ message: 'User not found' });
+
+    res.json({ message: 'User deleted successfully' });
+  } catch (error) {
+    console.error('Delete user error:', error);
+    res.status(500).json({ message: 'Server error deleting user' });
   }
 };
 
@@ -152,4 +173,5 @@ module.exports = {
   getAllUsers,
   updateUser,
   updateUserRole,
+  deleteUser,
 };

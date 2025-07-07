@@ -6,6 +6,8 @@ import Signup from './pages/Signup';
 import Profile from './pages/Profile';
 import Users from './pages/Users';
 import Admin from './pages/Admin';
+import './index.css';
+
 
 export default function App() {
   return (
