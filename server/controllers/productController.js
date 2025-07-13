@@ -11,17 +11,29 @@ exports.getAllProducts = async (req, res) => {
 };
 
 
-
 // Add new product
 exports.addProduct = async (req, res) => {
   try {
-    const product = new Product(req.body); // expects name, price, description, stock, image
+    const images = req.files ? req.files.map(file => file.path) : [];
+
+    const productData = {
+      name: req.body.name,
+      description: req.body.description,
+      price: Number(req.body.price),
+      stock: Number(req.body.stock),
+      images
+    };
+
+    const product = new Product(productData);
     await product.save();
+
     res.status(201).json(product);
   } catch (error) {
+    console.error('Add product error:', error);  // << Add this line to see error details
     res.status(500).json({ error: 'Failed to add product' });
   }
 };
+
 
 exports.deleteProduct = async (req, res) => {
   try {
