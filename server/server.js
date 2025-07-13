@@ -5,6 +5,11 @@ const connectDB = require('./db');        // your MongoDB connection
 const userRoutes = require('./routes/userRoute');
 const path = require('path');
 
+
+const productRoutes = require('./routes/productRoute');
+const cartRoutes = require('./routes/cartRoute');
+const commentRoutes = require('./routes/commentRoute');
+
 dotenv.config();
 
 // Connect to MongoDB
@@ -21,6 +26,11 @@ app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 // Routes
 app.use('/api/users', userRoutes);
+
+
+app.use('/api/products', productRoutes);
+app.use('/api/cart', cartRoutes);
+app.use('/api/comments', commentRoutes);
 
 // Test route to check server is running
 app.get('/api/hello', (req, res) => {
