@@ -28,8 +28,10 @@ export default function Login() {
 
       if (res.data.user.role === 'admin') {
         navigate('/admin');
-      } else {
-        navigate('/shopping');
+      } else if (res.data.user.role === 'inventory') {
+  navigate('/admin-panel'); 
+      }else {
+        navigate('/products');
       }
     } catch (err) {
       setError(err.response?.data?.message || 'Login failed');

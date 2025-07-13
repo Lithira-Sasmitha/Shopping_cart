@@ -55,9 +55,16 @@ export default function Admin() {
 
   const handleRoleChange = async (userId, newRole) => {
     try {
-      await axios.put(`http://localhost:5000/api/users/${userId}/role`, { role: newRole });
-      setMessage('Role updated');
-      fetchUsers();
+      await axios.put(
+  `http://localhost:5000/api/users/${userId}/role`,
+  { role: newRole },
+  {
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  }
+);
+
     } catch {
       setMessage('Failed to update role');
     }
@@ -105,13 +112,15 @@ export default function Admin() {
 
                   <td className="px-6 py-4 whitespace-nowrap">
                     <select
-                      value={u.role}
-                      onChange={(e) => handleRoleChange(u._id, e.target.value)}
-                      className="border border-gray-300 rounded-md px-3 py-1 text-gray-700 hover:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-400"
-                    >
-                      <option value="user">User</option>
-                      <option value="admin">Admin</option>
-                    </select>
+  value={u.role}
+  onChange={(e) => handleRoleChange(u._id, e.target.value)}
+  className="border border-gray-300 rounded-md px-3 py-1 text-gray-700 hover:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-400"
+>
+  <option value="user">User</option>
+  <option value="admin">Admin</option>
+  <option value="inventory">Inventory</option>
+</select>
+
                   </td>
 
                   <td className="px-6 py-4 whitespace-nowrap flex space-x-3">

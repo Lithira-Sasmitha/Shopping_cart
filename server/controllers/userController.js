@@ -130,8 +130,8 @@ const updateUserRole = async (req, res) => {
     const userId = req.params.id;
     const { role } = req.body;
 
-    // Validate role input
-    const validRoles = ['user', 'admin'];
+    // ✅ Updated: Allow "inventory" role
+    const validRoles = ['user', 'admin', 'inventory'];
     if (!validRoles.includes(role)) {
       return res.status(400).json({ message: 'Invalid role' });
     }
@@ -150,6 +150,7 @@ const updateUserRole = async (req, res) => {
     res.status(500).json({ message: 'Server error updating role' });
   }
 };
+
 
 // Delete user (admin only)
 const deleteUser = async (req, res) => {

@@ -70,3 +70,17 @@ exports.updateCartItem = async (req, res) => {
     res.status(500).json({ error: 'Failed to update cart item' });
   }
 };
+
+// controllers/cartController.js
+exports.getAllCarts = async (req, res) => {
+  try {
+    const carts = await Cart.find()
+      .populate('userId', 'name email') // populate user name and email
+      .populate('items.productId', 'name price'); // populate product name and price
+
+    res.status(200).json(carts);
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to get all carts' });
+  }
+};
+
