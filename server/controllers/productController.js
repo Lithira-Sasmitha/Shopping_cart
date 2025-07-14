@@ -1,78 +1,101 @@
 const Product = require('../models/Product');
+const fs = require('fs');
+const path = require('path');
 
-// Add new product
-exports.addProduct = async (req, res) => {
-  try {
-    const { productName, productPrice, productDescription, productImage } = req.body;
-
-    const newProduct = new Product({
-      productName,
-      productPrice,
-      productDescription,
-      productImage,
-      soldOut: false // default when adding
-    });
-
-    await newProduct.save();
-    res.status(201).json({ message: 'Product added successfully', product: newProduct });
-  } catch (error) {
-    res.status(500).json({ error: 'Failed to add product' });
-  }
-};
-
-// Get all products
+// GET all products
 exports.getAllProducts = async (req, res) => {
   try {
     const products = await Product.find();
-    res.status(200).json(products);
+    res.json(products);
   } catch (error) {
     res.status(500).json({ error: 'Failed to fetch products' });
   }
 };
 
-// Delete product by ID
-exports.deleteProduct = async (req, res) => {
+// POST add new product
+exports.addProduct = async (req, res) => {
   try {
-    const { id } = req.params;
-    const deleted = await Product.findByIdAndDelete(id);
-    if (!deleted) return res.status(404).json({ error: 'Product not found' });
+    const { productName, productPrice, productDescription } = req.body;
+    const productImage = req.file ? req.file.path : null;
 
-    res.status(200).json({ message: 'Product deleted successfully' });
+    if (!productImage) {
+      return res.status(400).json({ error: 'Product image is required' });
+    }
+
+    const product = new Product({
+      productName,
+      productPrice,
+      productDescription,
+      productImage,
+    });
+    await product.save();
+    res.status(201).json(product);
   } catch (error) {
-    res.status(500).json({ error: 'Failed to delete product' });
+    res.status(500).json({ error: 'Failed to add product' });
   }
 };
 
-// Update product by ID
+// PUT update product
 exports.updateProduct = async (req, res) => {
   try {
     const { id } = req.params;
-    const updatedProduct = await Product.findByIdAndUpdate(id, req.body, { new: true });
+    const { productName, productPrice, productDescription } = req.body;
 
-    if (!updatedProduct) return res.status(404).json({ error: 'Product not found' });
+    const product = await Product.findById(id);
+    if (!product) return res.status(404).json({ error: 'Product not found' });
 
-    res.status(200).json({ message: 'Product updated successfully', product: updatedProduct });
+    // If new image uploaded, delete old one
+    if (req.file) {
+      if (product.productImage && fs.existsSync(product.productImage)) {
+        fs.unlinkSync(product.productImage);
+      }
+      product.productImage = req.file.path;
+    }
+
+    product.productName = productName;
+    product.productPrice = productPrice;
+    product.productDescription = productDescription;
+
+    await product.save();
+    res.json(product);
   } catch (error) {
     res.status(500).json({ error: 'Failed to update product' });
   }
 };
 
-// Toggle SoldOut status
+// DELETE product
+exports.deleteProduct = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const product = await Product.findById(id);
+    if (!product) return res.status(404).json({ error: 'Product not found' });
+
+    // Delete image file
+    if (product.productImage && fs.existsSync(product.productImage)) {
+      fs.unlinkSync(product.productImage);
+    }
+
+    await Product.deleteOne({ _id: id });
+    res.json({ message: 'Product deleted' });
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to delete product' });
+  }
+};
+
+// PATCH toggle soldOut status
 exports.toggleSoldOut = async (req, res) => {
   try {
     const { id } = req.params;
-    const product = await Product.findById(id);
 
+    const product = await Product.findById(id);
     if (!product) return res.status(404).json({ error: 'Product not found' });
 
     product.soldOut = !product.soldOut;
     await product.save();
 
-    res.status(200).json({
-      message: `Product marked as ${product.soldOut ? 'Sold Out' : 'Available'}`,
-      product,
-    });
+    res.json(product);
   } catch (error) {
-    res.status(500).json({ error: 'Failed to toggle soldOut status' });
+    res.status(500).json({ error: 'Failed to toggle sold out' });
   }
 };

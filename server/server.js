@@ -17,21 +17,26 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-
+// Serve images in /uploads statically
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+
+// API routes
 app.use('/api/users', userRoutes);
 app.use('/api/products', productRoutes);
 app.use('/api/cart', cartRoutes);
 app.use('/api/comments', commentRoutes);
 
+// Test endpoint
 app.get('/api/hello', (req, res) => {
   res.json({ message: 'Hello from server!' });
 });
 
+// 404 handler
 app.use((req, res, next) => {
   res.status(404).json({ message: 'Route not found' });
 });
 
+// Global error handler
 app.use((err, req, res, next) => {
   console.error('Global error handler:', err);
   res.status(500).json({ message: 'Server error' });
