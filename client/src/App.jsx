@@ -23,7 +23,7 @@ export default function App() {
       <Navbar />
       <Routes>
         <Route path="/" element={<Home />} />
-        <Route path="/products" element={<ProductList userId={demoUserId} />} />
+        <Route path="/products" element={<ProductList userId={demoUserId} />} />  {/* Added product list page */}
         <Route path="/cart" element={<Cart userId={demoUserId} />} />
         {/* <Route path="/products/:id" element={<ProductDetails userId={demoUserId} />} /> */}
         <Route path="/login" element={<Login />} />
@@ -31,7 +31,7 @@ export default function App() {
         <Route path="/profile" element={<Profile />} />
         <Route path="/users" element={<Users />} />
         <Route path="/admin" element={<Admin />} />
-        <Route path="/admin-panel" element={<AdminPanel />} /> {/* ✅ NEW */}
+        <Route path="/admin-panel" element={<AdminPanel />} /> {/* Admin panel */}
       </Routes>
     </>
   );
