@@ -1,14 +1,20 @@
 import { useState, useContext, useRef, useEffect } from 'react';
-import { Link } from 'react-router-dom'; // for navigation
-import Profile from '../pages/Profile'; // adjust path
+import { Link, useLocation } from 'react-router-dom';
+import Profile from '../pages/Profile';
 import { AuthContext } from '../context/AuthContext';
+import { useCart } from '../context/CartContext';
 
 export default function Navbar() {
   const [showProfile, setShowProfile] = useState(false);
   const { user } = useContext(AuthContext);
+  const { cartItems } = useCart(); // ✅ get cart items from context
+  const cartCount = cartItems.length; // ✅ calculate count
   const dropdownRef = useRef(null);
+  const location = useLocation();
 
-  // Close profile dropdown when clicking outside
+  // Show cart icon only on /products page
+  const showCartIcon = location.pathname === '/products';
+
   useEffect(() => {
     function handleClickOutside(event) {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
@@ -27,25 +33,31 @@ export default function Navbar() {
     <nav className="bg-white shadow-md sticky top-0 z-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between h-16 items-center">
-          {/* Left side - Logo or brand */}
+          {/* Logo */}
           <div className="flex-shrink-0">
             <h1 className="text-2xl font-bold text-indigo-600 cursor-pointer select-none">
               ShopEasy
             </h1>
           </div>
 
-          {/* Right side - Cart and Profile */}
-          <div className="flex items-center gap-4" ref={dropdownRef}>
+          {/* Right Side - Cart + Profile */}
+          <div className="flex items-center gap-4 relative" ref={dropdownRef}>
             {user ? (
               <>
-                {/* Cart Icon */}
-                <Link to="/cart" title="View Cart">
-                  <img
-                    src="\img\shopping-cart.png"
-                    alt="Cart"
-                    className="h-7 w-7 cursor-pointer hover:scale-110 transition"
-                  />
-                </Link>
+                {showCartIcon && (
+                  <Link to="/cart" title="View Cart" className="relative">
+                    <img
+                      src="/img/shopping-cart.png"
+                      alt="Cart"
+                      className="h-7 w-7 cursor-pointer hover:scale-110 transition"
+                    />
+                    {cartCount > 0 && (
+                      <span className="absolute -top-1 -right-2 bg-red-500 text-white rounded-full text-xs px-1">
+                        {cartCount}
+                      </span>
+                    )}
+                  </Link>
+                )}
 
                 {/* Profile Picture */}
                 <img

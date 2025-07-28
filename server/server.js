@@ -9,6 +9,8 @@ const productRoutes = require('./routes/productRoute');
 const cartRoutes = require('./routes/cartRoute');
 const commentRoutes = require('./routes/commentRoute');
 
+
+
 dotenv.config();
 connectDB();
 
@@ -25,6 +27,9 @@ app.use('/api/users', userRoutes);
 app.use('/api/products', productRoutes);
 app.use('/api/cart', cartRoutes);
 app.use('/api/comments', commentRoutes);
+
+
+
 
 // Test endpoint
 app.get('/api/hello', (req, res) => {

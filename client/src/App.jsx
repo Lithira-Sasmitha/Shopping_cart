@@ -9,30 +9,28 @@ import Admin from './pages/Admin';
 
 import ProductList from './pages/product/ProductList';
 import Cart from './pages/product/Cart';
-// import ProductDetails from './pages/product/ProductDetails'; // optional
+import AdminPanel from './pages/product/AdminPanel';
 
-import AdminPanel from './pages/product/AdminPanel'; // ✅ NEW
+import { CartProvider } from './context/CartContext'; // ✅ IMPORT CART CONTEXT
 
 import './index.css';
 
 export default function App() {
-  const demoUserId = "6873e74e5a3ae05eef644121";
-
   return (
-    <>
+    <CartProvider> {/* ✅ WRAP ENTIRE APP WITH CART CONTEXT */}
       <Navbar />
       <Routes>
         <Route path="/" element={<Home />} />
-        <Route path="/products" element={<ProductList userId={demoUserId} />} />  {/* Added product list page */}
-        <Route path="/cart" element={<Cart userId={demoUserId} />} />
-        {/* <Route path="/products/:id" element={<ProductDetails userId={demoUserId} />} /> */}
+        <Route path="/products" element={<ProductList />} />
+        <Route path="/cart" element={<Cart />} />
+        {/* <Route path="/products/:id" element={<ProductDetails />} /> */}
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
         <Route path="/profile" element={<Profile />} />
         <Route path="/users" element={<Users />} />
         <Route path="/admin" element={<Admin />} />
-        <Route path="/admin-panel" element={<AdminPanel />} /> {/* Admin panel */}
+        <Route path="/admin-panel" element={<AdminPanel />} />
       </Routes>
-    </>
+    </CartProvider>
   );
 }
