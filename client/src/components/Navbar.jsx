@@ -1,4 +1,5 @@
 import { useState, useContext, useRef, useEffect } from 'react';
+import { Link } from 'react-router-dom'; // for navigation
 import Profile from '../pages/Profile'; // adjust path
 import { AuthContext } from '../context/AuthContext';
 
@@ -33,10 +34,20 @@ export default function Navbar() {
             </h1>
           </div>
 
-          {/* Right side - Profile avatar */}
-          <div className="relative" ref={dropdownRef}>
+          {/* Right side - Cart and Profile */}
+          <div className="flex items-center gap-4" ref={dropdownRef}>
             {user ? (
               <>
+                {/* Cart Icon */}
+                <Link to="/cart" title="View Cart">
+                  <img
+                    src="\img\shopping-cart.png"
+                    alt="Cart"
+                    className="h-7 w-7 cursor-pointer hover:scale-110 transition"
+                  />
+                </Link>
+
+                {/* Profile Picture */}
                 <img
                   src={
                     user.profilePicture
@@ -49,7 +60,7 @@ export default function Navbar() {
                   title="Open Profile"
                 />
 
-                {/* Profile dropdown/modal */}
+                {/* Profile Dropdown */}
                 {showProfile && (
                   <div className="absolute right-0 mt-2 w-72 bg-white rounded-lg shadow-lg ring-1 ring-black ring-opacity-5 overflow-hidden">
                     <Profile show={showProfile} onClose={() => setShowProfile(false)} />
